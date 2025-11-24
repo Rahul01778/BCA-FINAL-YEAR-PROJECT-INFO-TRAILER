@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Watchlist</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #watchlist-container {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .watchlist-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .movie-card {
+      width: 250px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      text-align: center;
+      padding-bottom: 10px;
+    }
+
+    .movie-card img {
+      width: 100%;
+      height: auto;
+    }
+
+    .movie-card h3 {
+      font-size: 18px;
+      color: #222;
+      margin: 10px 0 5px;
+    }
+
+    .movie-card p {
+      font-size: 14px;
+      color: #555;
+      margin: 5px 10px;
+    }
+
+    .movie-card button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #e50914;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .movie-card button:hover {
+      background-color: #b0070f;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-left"><h1 class="logo">LUHAR</h1></div>
+    <div class="navbar-right">
+      <button onclick="window.location.href='/'">Home</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <section id="watchlist-container">
+    <h2>My Watchlist</h2>
+    <div id="watchlist" class="watchlist-grid"></div>
+  </section>
+
+  <script>
+    const apiKey = '29a4388f3ecf68e539a54511a66f2bc5';
+
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    function logout() {
+      document.cookie = "username=; Max-Age=0; path=/";
+      window.location.href = 'login';
+    }
+
+    const username = getCookie('username');
+    const watchlist = JSON.parse(localStorage.getItem(username + "_watchlist")) || [];
+    const container = document.getElementById('watchlist');
+
+    if (watchlist.length === 0) {
+      container.innerHTML = "<p>You have no saved movies.</p>";
+    } else {
+      watchlist.forEach(item => {
+        fetch(`https://api.themoviedb.org/3/movie/${item.id}?api_key=${apiKey}&language=en-US`)
+          .then(res => res.json())
+          .then(movie => {
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+
+            const posterPath = movie.poster_path
+              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+              : 'https://via.placeholder.com/500x750?text=No+Image';
+
+            const genres = movie.genres.map(g => g.name).join(', ');
+
+            card.innerHTML = `
+              <img src="${posterPath}" alt="${movie.title}">
+              <h3>${movie.title}</h3>
+              <p><strong>Release:</strong> ${movie.release_date}</p>
+              <p><strong>Genres:</strong> ${genres}</p>
+              <p><strong>Overview:</strong> ${movie.overview.slice(0, 100)}...</p>
+              <button onclick="removeFromWatchlist(${movie.id})">Remove</button>
+            `;
+            container.appendChild(card);
+          });
+      });
+    }
+
+    function removeFromWatchlist(movieId) {
+      const newList = watchlist.filter(movie => movie.id !== movieId);
+      localStorage.setItem(username + "_watchlist", JSON.stringify(newList));
+      location.reload();
+    }
+  </script>
+</body>
+</html>

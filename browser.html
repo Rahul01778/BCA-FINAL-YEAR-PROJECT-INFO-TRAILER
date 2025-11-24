@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Browse Movies</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; padding: 0 15px; }
+    .filters { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+    select, input[type="number"] { padding: 5px; font-size: 1rem; }
+    button { padding: 6px 12px; cursor: pointer; background-color: #e50914; color: white; border: none; border-radius: 4px; }
+    button:hover { background-color: #b0070f; }
+    .movie-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+    .movie-card { width: 150px; text-align: center; }
+    .movie-card img { width: 100%; border-radius: 6px; }
+    .movie-card h4 { font-size: 16px; margin: 8px 0 4px; }
+  </style>
+</head>
+<body>
+  <h1>Browse Movies</h1>
+
+  <div class="filters">
+    <select id="genre-select">
+      <option value="">Select Genre</option>
+    </select>
+
+    <input type="number" id="year-input" placeholder="Year (e.g. 2023)" min="1900" max="2099" />
+
+    <button onclick="filterMovies()">Filter</button>
+  </div>
+
+  <div id="movie-list" class="movie-grid"></div>
+
+  <script>
+    const apiKey = '29a4388f3ecf68e539a54511a66f2bc5';
+    const genreSelect = document.getElementById('genre-select');
+    const movieList = document.getElementById('movie-list');
+
+    async function loadGenres() {
+      const res = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`);
+      const data = await res.json();
+      data.genres.forEach(genre => {
+        const option = document.createElement('option');
+        option.value = genre.id;
+        option.textContent = genre.name;
+        genreSelect.appendChild(option);
+      });
+    }
+
+    async function filterMovies() {
+      const genreId = genreSelect.value;
+      const year = document.getElementById('year-input').value;
+
+      let url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&sort_by=popularity.desc&with_watch_monetization_types=flatrate`;
+
+      if (genreId) url += `&with_genres=${genreId}`;
+      if (year) url += `&primary_release_year=${year}`;
+
+      movieList.innerHTML = 'Loading...';
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.results.length) {
+          movieList.innerHTML = '<p>No movies found.</p>';
+          return;
+        }
+
+        movieList.innerHTML = '';
+
+        data.results.forEach(movie => {
+          const card = document.createElement('div');
+          card.className = 'movie-card';
+
+          const poster = movie.poster_path
+            ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
+            : 'https://via.placeholder.com/200x300?text=No+Image';
+
+          card.innerHTML = `
+            <a href="movie.html?movie_id=${movie.id}">
+              <img src="${poster}" alt="${movie.title}" />
+              <h4>${movie.title}</h4>
+            </a>
+          `;
+          movieList.appendChild(card);
+        });
+      } catch (error) {
+        console.error(error);
+        movieList.innerHTML = '<p>Error loading movies.</p>';
+      }
+    }
+
+    loadGenres();
+  </script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>LUHAR - User Profile</title>
+    <meta name="description" content="LUHAR - User Profile: View watchlist, favorites, watched movies, and suggestions." />
+    <link rel="icon" href="CINEMA LOGO VECTOR.jpg" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Add avatar specific styles */
+        .avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #e50914;
+            margin-bottom: 15px;
+        }
+
+        .avatar-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .avatar-actions button {
+            padding: 8px 15px;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .avatar-actions button:hover {
+            background-color: #777;
+        }
+
+        body.night-mode .avatar-actions button {
+            background-color: #444;
+        }
+
+        body.night-mode .avatar-actions button:hover {
+            background-color: #666;
+        }
+
+        /* Watched movies progress styles */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+        }
+
+        .progress-text {
+            font-size: 0.8em;
+            color: #666;
+            margin: 2px 0;
+        }
+
+        .watched-date {
+            font-size: 0.8em;
+            color: #888;
+            margin: 2px 0 5px 0;
+        }
+
+        .watched-movie-info {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <button id="hamburger-button" class="hamburger-button">
+                <i class="fa fa-bars"></i>
+            </button>
+            <h1 class="logo">LUHAR</h1>
+        </div>
+        <div class="navbar-right">
+            <div class="nav-links nav-links-sidebar" id="nav-links">
+               <button id="home-button" onclick="window.location.href='/'">
+                    <i class="fa fa-home"></i> Home
+                </button>
+                <input type="text" id="search-input" placeholder="Search Movies..." />
+                <button id="search-button" onclick="searchMovies()">
+                    <i class="fa fa-search"></i> Search
+                </button>
+                <select id="genre-select" onchange="filterMoviesByGenre(this.value)">
+                    <option value="">Browse Genres</option>
+                </select>
+                <button onclick="fetchTrendingMovies()">Trending</button>
+                <button onclick="fetchTopRatedMovies()">Top Rated</button>
+                <button id="night-mode-toggle" onclick="toggleNightMode()">
+                    <i class="fa fa-moon" id="theme-icon"></i>
+                </button>
+                <button id="login-button" onclick="window.location.href='http://localhost:8080/login'">
+                    <i class="fa fa-user"></i>
+                </button>
+                <span id="user-info" style="margin-left: 10px; font-weight: bold;"></span>
+                <button id="logout-button" onclick="logout()" style="display: none;">
+                    <i class="fa fa-sign-out-alt"></i>
+                </button>
+                <button onclick="window.location.href='watchlist.html'" title="Watchlist">
+                    <i class="fa-solid fa-bookmark"></i>
+                </button>
+                <button onclick="window.location.href='profile.html'" title="Profile">
+                    <i class="fa-solid fa-user-circle"></i> Profile
+                </button>
+                <button id="admin-dashboard-button" onclick="window.location.href='/admin'" class="nav-button" style="display: none;">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Admin
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section id="profile-section" class="profile-page-section">
+            <h2 class="category-title">User Profile</h2>
+            <div class="profile-info-card">
+                <div class="avatar-container">
+                    <img id="user-avatar" src="https://i.pravatar.cc/150?img=1" alt="User Avatar" class="profile-avatar">
+                    <div class="avatar-actions">
+                        <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+                        <button onclick="document.getElementById('avatar-upload').click()">Change Avatar</button>
+                        <button onclick="chooseDefaultAvatar()">Choose Default</button>
+                    </div>
+                </div>
+                <p>Welcome, <strong id="profile-username">Guest</strong>!</p>
+            </div>
+
+            <h3 class="profile-subsection-title">My Watchlist</h3>
+            <div id="profile-watchlist" class="profile-movie-grid">
+                <p>Loading watchlist...</p>
+            </div>
+
+            <h3 class="profile-subsection-title">My Favorites</h3>
+            <div id="profile-favorites" class="profile-movie-grid">
+                <p>Loading favorites...</p>
+            </div>
+
+            <h3 class="profile-subsection-title">Watched Movies</h3>
+            <div id="profile-watched" class="profile-movie-grid">
+                <p>Loading watched movies...</p>
+            </div>
+
+            <h3 class="profile-subsection-title">Suggested for You</h3>
+            <div id="profile-suggestions" class="profile-movie-grid">
+                <p>Loading suggestions...</p>
+            </div>
+        </section>
+    </main>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // Profile page specific JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUserUI(); // From script.js
+            toggleNightMode(false); // Apply stored theme
+            loadProfileData();
+
+            // Set up avatar upload functionality
+            document.getElementById('avatar-upload').addEventListener('change', handleAvatarUpload);
+
+            // Load saved avatar if exists
+            const username = getCookie('username');
+            if (username) {
+                const savedAvatar = localStorage.getItem(`${username}_avatar`);
+                if (savedAvatar) {
+                    document.getElementById('user-avatar').src = savedAvatar;
+                }
+            }
+
+            // Admin Button Visibility Logic
+            const adminButton = document.getElementById('admin-dashboard-button');
+            const isAdminCookie = getCookie('is_admin');
+            if (isAdminCookie === 'true') {
+                adminButton.style.display = 'block';
+            } else {
+                adminButton.style.display = 'none';
+            }
+        });
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const avatarImg = document.getElementById('user-avatar');
+                avatarImg.src = e.target.result;
+                
+                // Save to local storage
+                const username = getCookie('username');
+                if (username) {
+                    localStorage.setItem(`${username}_avatar`, e.target.result);
+                    showToast('Avatar updated successfully!');
+                }
+            };
+            reader.onerror = function() {
+                showToast('Error reading the image file. Please try another image.', true);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function chooseDefaultAvatar() {
+            const username = getCookie('username');
+            if (!username) {
+                showToast('Please log in to change your avatar.', true);
+                return;
+            }
+
+            const defaultAvatars = [
+                'https://i.pravatar.cc/150?img=1',
+                'https://i.pravatar.cc/150?img=3',
+                'https://i.pravatar.cc/150?img=5',
+                'https://i.pravatar.cc/150?img=7',
+                'https://i.pravatar.cc/150?img=9'
+            ];
+            
+            const randomAvatar = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
+            const avatarImg = document.getElementById('user-avatar');
+            avatarImg.src = randomAvatar;
+            
+            // Save to local storage
+            localStorage.setItem(`${username}_avatar`, randomAvatar);
+            showToast('Default avatar selected!');
+        }
+
+        async function loadProfileData() {
+            const username = getCookie('username');
+            const profileUsernameElement = document.getElementById('profile-username');
+            if (username) {
+                profileUsernameElement.textContent = username;
+            } else {
+                profileUsernameElement.textContent = 'Guest (Please log in)';
+                // Hide sections if not logged in
+                document.getElementById('profile-watchlist').innerHTML = '<p>Please log in to view your watchlist.</p>';
+                document.getElementById('profile-favorites').innerHTML = '<p>Please log in to view your favorites.</p>';
+                document.getElementById('profile-watched').innerHTML = '<p>Please log in to view your watched movies.</p>';
+                document.getElementById('profile-suggestions').innerHTML = '<p>Please log in to get suggestions.</p>';
+                return;
+            }
+
+            // Load Watchlist
+            let watchlist = JSON.parse(localStorage.getItem(`${username}_watchlist`)) || [];
+            if (watchlist.length > 0) {
+                displayProfileMovies(watchlist, 'profile-watchlist');
+            } else {
+                document.getElementById('profile-watchlist').innerHTML = '<p>Your watchlist is empty. Add some movies from the home page!</p>';
+            }
+
+            // Load Favorites
+            let favorites = JSON.parse(localStorage.getItem(`${username}_favorites`)) || [];
+            if (favorites.length > 0) {
+                displayProfileMovies(favorites, 'profile-favorites');
+            } else {
+                document.getElementById('profile-favorites').innerHTML = '<p>Your favorites list is empty.</p>';
+            }
+
+            // Load Watched Movies
+            await loadWatchedMovies();
+
+            // Load Suggestions (based on watchlist or favorites)
+            if (watchlist.length > 0 || favorites.length > 0) {
+                await fetchAndDisplaySuggestions(watchlist, favorites);
+            } else {
+                document.getElementById('profile-suggestions').innerHTML = '<p>Add movies to your watchlist or favorites to get suggestions!</p>';
+            }
+        }
+
+        async function loadWatchedMovies() {
+            const username = getCookie('username');
+            if (!username) return;
+
+            const watchedList = JSON.parse(localStorage.getItem(`${username}_watched`)) || [];
+            if (watchedList.length === 0) {
+                document.getElementById('profile-watched').innerHTML = '<p>You haven\'t marked any movies as watched yet.</p>';
+                return;
+            }
+
+            // Sort by most recently watched first
+            watchedList.sort((a, b) => new Date(b.lastWatched) - new Date(a.lastWatched));
+
+            const container = document.getElementById('profile-watched');
+            container.innerHTML = '<p>Loading watched movies...</p>';
+
+            try {
+                const moviesData = [];
+                // Fetch details for each watched movie (limit to 20 most recent)
+                for (const watchedItem of watchedList.slice(0, 20)) {
+                    try {
+                        const response = await fetch(`https://api.themoviedb.org/3/movie/${watchedItem.id}?api_key=${apiKey}`);
+                        if (response.ok) {
+                            const movie = await response.json();
+                            moviesData.push({
+                                ...movie,
+                                progress: watchedItem.progress,
+                                lastWatched: watchedItem.lastWatched
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching movie ${watchedItem.id}:`, error);
+                    }
+                }
+
+                displayWatchedMovies(moviesData);
+            } catch (error) {
+                console.error('Error loading watched movies:', error);
+                container.innerHTML = '<p>Error loading watched movies. Please try again.</p>';
+            }
+        }
+
+        function displayWatchedMovies(movies) {
+            const container = document.getElementById('profile-watched');
+            container.innerHTML = '';
+
+            if (movies.length === 0) {
+                container.innerHTML = '<p>No watched movies to display.</p>';
+                return;
+            }
+
+            movies.forEach(movie => {
+                const posterPath = movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : 'https://via.placeholder.com/200x300?text=No+Image';
+                const watchedDate = new Date(movie.lastWatched).toLocaleDateString();
+                
+                const movieCard = document.createElement('div');
+                movieCard.classList.add('profile-movie-card');
+                movieCard.innerHTML = `
+                    <img src="${posterPath}" alt="${movie.title}" onclick="showMovieDetails(${movie.id})">
+                    <div class="watched-movie-info">
+                        <p><a href="#" onclick="showMovieDetails(${movie.id})">${movie.title}</a></p>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: ${movie.progress}%"></div>
+                        </div>
+                        <p class="progress-text">${movie.progress}% watched</p>
+                        <p class="watched-date">Last watched: ${watchedDate}</p>
+                        <button class="remove-btn" onclick="removeFromWatched(${movie.id}, '${escapeHtml(movie.title)}')">
+                            <i class="fa-solid fa-eye-slash"></i> Remove
+                        </button>
+                    </div>
+                `;
+                container.appendChild(movieCard);
+            });
+        }
+
+        async function displayProfileMovies(movieList, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '<p>Loading movies...</p>';
+            const movieIds = movieList.map(m => m.id);
+            let moviesData = [];
+
+            // Fetch details for each movie in the list
+            for (const movieId of movieIds) {
+                try {
+                    const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`);
+                    if (response.ok) {
+                        const movie = await response.json();
+                        moviesData.push(movie);
+                    }
+                } catch (error) {
+                    console.error(`Error fetching movie ${movieId}:`, error);
+                }
+            }
+
+            container.innerHTML = '';
+            if (moviesData.length === 0) {
+                container.innerHTML = '<p>No movies to display in this list.</p>';
+                return;
+            }
+
+            moviesData.forEach(movie => {
+                const posterPath = movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : 'https://via.placeholder.com/200x300?text=No+Image';
+                const movieCard = document.createElement('div');
+                movieCard.classList.add('profile-movie-card');
+                movieCard.innerHTML = `
+                    <img src="${posterPath}" alt="${movie.title}" onclick="showMovieDetails(${movie.id})">
+                    <p><a href="#" onclick="showMovieDetails(${movie.id})">${movie.title}</a></p>
+                    <button class="remove-btn" onclick="removeMovieFromList(${movie.id}, '${containerId}', '${escapeHtml(movie.title)}')">Remove</button>
+                `;
+                container.appendChild(movieCard);
+            });
+        }
+
+        async function fetchAndDisplaySuggestions(watchlist, favorites) {
+            const suggestionsContainer = document.getElementById('profile-suggestions');
+            suggestionsContainer.innerHTML = '<p>Generating suggestions...</p>';
+
+            const allMovieIds = new Set([...watchlist.map(m => m.id), ...favorites.map(m => m.id)]);
+            let recommendedMovies = [];
+            const processedMovieIds = new Set();
+
+            if (allMovieIds.size === 0) {
+                suggestionsContainer.innerHTML = '<p>Add movies to your watchlist or favorites to get suggestions!</p>';
+                return;
+            }
+
+            // Fetch recommendations for the first 3 movies in combined list
+            const movieIdsToFetchRecommendations = Array.from(allMovieIds).slice(0, 3);
+
+            for (const movieId of movieIdsToFetchRecommendations) {
+                try {
+                    const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/recommendations?api_key=${apiKey}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        data.results.forEach(recMovie => {
+                            if (!allMovieIds.has(recMovie.id) && !processedMovieIds.has(recMovie.id)) {
+                                recommendedMovies.push(recMovie);
+                                processedMovieIds.add(recMovie.id);
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Error fetching recommendations for movie ${movieId}:`, error);
+                }
+            }
+
+            // Shuffle and take top 10 suggestions
+            recommendedMovies = recommendedMovies.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+            if (recommendedMovies.length > 0) {
+                suggestionsContainer.innerHTML = '';
+                recommendedMovies.forEach(movie => {
+                    const posterPath = movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : 'https://via.placeholder.com/200x300?text=No+Image';
+                    const movieCard = document.createElement('div');
+                    movieCard.classList.add('profile-movie-card');
+                    movieCard.innerHTML = `
+                        <img src="${posterPath}" alt="${movie.title}" onclick="showMovieDetails(${movie.id})">
+                        <p><a href="#" onclick="showMovieDetails(${movie.id})">${movie.title}</a></p>
+                        <button class="add-to-watchlist-btn" onclick="addToWatchlist(${movie.id}, '${escapeHtml(movie.title)}')">Add to Watchlist</button>
+                    `;
+                    suggestionsContainer.appendChild(movieCard);
+                });
+            } else {
+                suggestionsContainer.innerHTML = '<p>Could not find new suggestions based on your lists. Try adding more diverse movies!</p>';
+            }
+        }
+
+        function removeMovieFromList(movieId, containerId, movieTitle) {
+            const username = getCookie('username');
+            if (!username) return;
+
+            let listKey;
+            if (containerId === 'profile-watchlist') {
+                listKey = `${username}_watchlist`;
+            } else if (containerId === 'profile-favorites') {
+                listKey = `${username}_favorites`;
+            } else {
+                return;
+            }
+
+            let currentList = JSON.parse(localStorage.getItem(listKey)) || [];
+            const updatedList = currentList.filter(m => m.id !== movieId);
+            localStorage.setItem(listKey, JSON.stringify(updatedList));
+
+            showToast(`"${movieTitle}" removed from your ${containerId === 'profile-watchlist' ? 'watchlist' : 'favorites'}.`);
+            loadProfileData();
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Hamburger and sidebar logic
+        const hamburgerButton = document.getElementById("hamburger-button");
+        const navLinks = document.getElementById("nav-links");
+        const sidebarOverlay = document.getElementById("sidebar-overlay");
+
+        function toggleSidebar() {
+            navLinks.classList.toggle("show");
+            sidebarOverlay.classList.toggle("show");
+        }
+
+        function closeSidebar() {
+            navLinks.classList.remove("show");
+            sidebarOverlay.classList.remove("show");
+        }
+
+        hamburgerButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleSidebar();
+        });
+
+        document.addEventListener("click", (event) => {
+            if (navLinks.classList.contains("show") &&
+                !navLinks.contains(event.target) &&
+                !hamburgerButton.contains(event.target)) {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>

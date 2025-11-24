@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - LUHAR</title>
+    <link rel="icon" href="CINEMA LOGO VECTOR.jpg" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <div class="logo">ADMIN <span>PANEL</span></div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-item active" onclick="showSection('user-management')"><i class="fas fa-users"></i> User Management</a></li>
+                    <li><a href="#" class="nav-item" onclick="showSection('movie-management')"><i class="fas fa-film"></i> Movie Management</a></li>
+                    <li><a href="#" class="nav-item" onclick="showSection('genre-management')"><i class="fas fa-tags"></i> Genre Management</a></li>
+                    <li><a href="#" class="nav-item" onclick="showSection('analytics-dashboard')"><i class="fas fa-chart-bar"></i> Analytics Dashboard</a></li>
+                    <li><a href="#" class="nav-item" onclick="showSection('settings-management')"><i class="fas fa-cogs"></i> Application Settings</a></li>
+                    <li><a href="/" class="nav-item"><i class="fas fa-home"></i> Go to Home</a></li>
+                    <li><a href="/logout" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="app-brand"><i class="fas fa-tachometer-alt"></i> LUHAR Admin</div>
+                <div class="user-controls-top"> <button class="icon-btn"><i class="fas fa-bell"></i></button>
+                    <button class="icon-btn"><i class="fas fa-cog"></i></button>
+                    <img src="https://placeholder.com/35" alt="User" class="user-profile-img">
+
+            </header>
+
+            <div class="container">
+                <h1 class="dashboard-header" id="current-section-title">User Management</h1>
+
+                <div id="status-message" class="status-message" style="display: none;"></div>
+
+                <div class="card user-management" id="user-management">
+                    <div class="card-header">
+                        <h2>User Management</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-header-controls">
+                            <input type="text" id="username-search" placeholder="Search by username..." class="search-input">
+                            <select id="role-filter" class="filter-select">
+                                <option value="all">All Roles</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">Regular User</option>
+                            </select>
+                            <select id="suspension-filter" class="filter-select">
+                                <option value="all">All Statuses</option>
+                                <option value="active">Active</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                            <button onclick="applyFilters()" class="btn btn-success">Apply Filters</button>
+                        </div>
+
+                        <table class="data-table">
+                        <thead>
+                        <tr>
+                         <th>Username</th>
+                         <th>Email</th>
+                         <th>Phone</th>
+                         <th>Role</th>
+                         <th>Suspension</th>
+                         <th>Actions</th>
+                       </tr>
+                       </thead>
+                       <tbody id="user-table-body">
+                     <tr><td colspan="6" style="text-align: center;">Loading users...</td></tr>
+                    </tbody>
+                    </table>
+                    </div>
+                </div>
+
+                <div class="card content-management" id="movie-management" style="display: none;">
+                    <div class="card-header">
+                        <h2>Movie Management</h2>
+                        <button class="btn btn-primary" onclick="resetMovieForm()">Add New Movie</button>
+                    </div>
+                    <div class="card-body">
+                        <h3>Add/Edit Movie</h3>
+                        <form id="movie-form" class="content-form">
+                            <input type="hidden" id="movie-id">
+                            <div class="form-group">
+                                <label for="movie-title">Title:</label>
+                                <input type="text" id="movie-title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="movie-overview">Overview:</label>
+                                <textarea id="movie-overview" rows="4"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="movie-release-date">Release Date:</label>
+                                <input type="date" id="movie-release-date">
+                            </div>
+                            <div class="form-group">
+                                <label for="movie-poster-path">Poster URL:</label>
+                                <input type="text" id="movie-poster-path" placeholder="e.g., https://image.tmdb.org/t/p/w500/abc.jpg">
+                            </div>
+                            <div class="form-group">
+                                <label for="movie-genres">Genres (Select multiple):</label>
+                                <select id="movie-genres" multiple size="5" class="multi-select-dropdown"></select>
+                            </div>
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="movie-is-featured">
+                                <label for="movie-is-featured">Featured Content</label>
+                            </div>
+                            <button type="submit" id="save-movie-btn" class="btn btn-primary">Add Movie</button>
+                            <button type="button" id="cancel-edit-movie-btn" class="btn btn-secondary" style="display: none;">Cancel Edit</button>
+                        </form>
+
+                        <h3 class="mt-4">Managed Movies</h3>
+                        <table class="data-table movie-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Release Date</th>
+                                    <th>Genres</th>
+                                    <th>Featured</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="movie-table-body">
+                                <tr><td colspan="5" style="text-align: center;">Loading movies...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card content-management" id="genre-management" style="display: none;">
+                    <div class="card-header">
+                        <h2>Genre Management</h2>
+                        <button class="btn btn-primary" onclick="resetGenreForm()">Add New Genre</button>
+                    </div>
+                    <div class="card-body">
+                        <h3>Add/Edit Genre</h3>
+                        <form id="genre-form" class="content-form">
+                            <input type="hidden" id="genre-id">
+                            <div class="form-group">
+                                <label for="genre-name">Genre Name:</label>
+                                <input type="text" id="genre-name" required>
+                            </div>
+                            <button type="submit" id="save-genre-btn" class="btn btn-primary">Add Genre</button>
+                            <button type="button" id="cancel-edit-genre-btn" class="btn btn-secondary" style="display: none;">Cancel Edit</button>
+                        </form>
+
+                        <h3 class="mt-4">Defined Genres</h3>
+                        <table class="data-table genre-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="genre-table-body">
+                                <tr><td colspan="2" style="text-align: center;">Loading genres...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card analytics-dashboard" id="analytics-dashboard" style="display: none;">
+                    <div class="card-header">
+                        <h2>Analytics Dashboard</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <h3>Users by Creation Month</h3>
+                            <canvas id="usersByCreationMonthChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Movies by Genre</h3>
+                            <canvas id="moviesByGenreChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Top Movies by Feature</h3>
+                            <canvas id="topMoviesByFeatureChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Active vs Suspended Users</h3>
+                            <canvas id="activeVsSuspendedUsersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card settings-management" id="settings-management" style="display: none;">
+                    <div class="card-header">
+                        <h2>Application Settings</h2>
+                    </div>
+                    <div class="card-body">
+                        <h3>TMDb API Key</h3>
+                        <form id="api-key-form" class="content-form">
+                            <div class="form-group">
+                                <label for="tmdb-api-key">API Key:</label>
+                                <input type="text" id="tmdb-api-key" name="TMDB_API_KEY" required>
+                            </div>
+                            <button type="button" onclick="saveSettings()" class="btn btn-primary">Save API Key</button>
+                        </form>
+
+                        <h3>Site Announcements</h3>
+                        <form id="announcement-form" class="content-form">
+                            <div class="form-group">
+                                <label for="site-announcement">Announcement Message:</label>
+                                <textarea id="site-announcement" name="SITE_ANNOUNCEMENT" rows="3"></textarea>
+                            </div>
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="announcement-active" name="ANNOUNCEMENT_ACTIVE">
+                                <label for="announcement-active">Enable Announcement</label>
+                            </div>
+                            <button type="button" onclick="saveSettings()" class="btn btn-primary">Save Announcement</button>
+                        </form>
+
+                        <h3>User Registration</h3>
+                        <form id="signup-setting-form" class="content-form">
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="allow-signup" name="ALLOW_SIGNUP">
+                                <label for="allow-signup">Allow New User Signups</label>
+                            </div>
+                            <button type="button" onclick="saveSettings()" class="btn btn-primary">Save Registration Setting</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="dashboard-footer">
+                <p>&copy; 2025 LUHAR. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
+    <script>
+        const userTableBody = document.getElementById('user-table-body');
+        const statusMessageDiv = document.getElementById('status-message');
+        const currentSectionTitle = document.getElementById('current-section-title');
+        let allManagedGenres = [];
+
+        // Function to show/hide sections and fetch data
+        function showSection(sectionId) {
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const activeNavItem = document.querySelector(`.sidebar-nav .nav-item[onclick*="${sectionId}"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+                currentSectionTitle.textContent = activeNavItem.textContent.replace(' Management', '').replace(' Dashboard', '');
+            }
+
+            if (sectionId === 'user-management') {
+                fetchUsers();
+            } else if (sectionId === 'movie-management') {
+                fetchAllGenres().then(() => fetchMovies());
+            } else if (sectionId === 'genre-management') {
+                fetchGenres();
+            } else if (sectionId === 'analytics-dashboard') {
+                fetchAnalytics();
+            } else if (sectionId === 'settings-management') {
+                fetchSettings();
+            }
+        }
+
+        // --- User Management Functions ---
+        async function fetchUsers() {
+    try {
+        const response = await fetch('/admin/users');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const users = await response.json();
+        renderUsers(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        userTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">Failed to load users.</td></tr>';
+    }
+}
+
+function renderUsers(users) {
+    const usernameSearch = document.getElementById('username-search').value.toLowerCase();
+    const roleFilter = document.getElementById('role-filter').value;
+    const suspensionFilter = document.getElementById('suspension-filter').value;
+
+    const filteredUsers = users.filter(user => {
+        const matchesUsername = user.username.toLowerCase().includes(usernameSearch);
+        const matchesRole = roleFilter === 'all' || (roleFilter === 'admin' ? user.is_admin : !user.is_admin);
+        const matchesSuspension = suspensionFilter === 'all' || 
+                                 (suspensionFilter === 'suspended' ? user.is_suspended : !user.is_suspended);
+        return matchesUsername && matchesRole && matchesSuspension;
+    });
+
+    userTableBody.innerHTML = '';
+    
+    if (filteredUsers.length === 0) {
+        userTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No users found matching filters.</td></tr>';
+        return;
+    }
+
+    filteredUsers.forEach(user => {
+        const row = userTableBody.insertRow();
+        row.insertCell().textContent = user.username;
+        row.insertCell().textContent = user.email || 'N/A';
+        row.insertCell().textContent = user.phone || 'N/A';
+        row.insertCell().textContent = user.is_admin ? 'Admin' : 'User';
+        row.insertCell().textContent = user.is_suspended ? 'Suspended' : 'Active';
+        
+        const actionsCell = row.insertCell();
+        
+        // Suspend/Activate button
+        const suspendBtn = document.createElement('button');
+        suspendBtn.className = `btn btn-sm ${user.is_suspended ? 'btn-success' : 'btn-warning'}`;
+        suspendBtn.textContent = user.is_suspended ? 'Activate' : 'Suspend';
+        suspendBtn.onclick = () => toggleUserSuspension(user.username, !user.is_suspended);
+        actionsCell.appendChild(suspendBtn);
+
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-sm btn-danger';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onclick = () => deleteUser(user.username);
+        actionsCell.appendChild(deleteBtn);
+
+        // Make Admin/Remove Admin button (only if not current user)
+        if (!user.is_admin) {
+            const makeAdminBtn = document.createElement('button');
+            makeAdminBtn.className = 'btn btn-sm btn-primary';
+            makeAdminBtn.textContent = 'Make Admin';
+            makeAdminBtn.onclick = () => toggleAdminStatus(user.username, true);
+            actionsCell.appendChild(makeAdminBtn);
+        } else {
+            const removeAdminBtn = document.createElement('button');
+            removeAdminBtn.className = 'btn btn-sm btn-secondary';
+            removeAdminBtn.textContent = 'Remove Admin';
+            removeAdminBtn.onclick = () => toggleAdminStatus(user.username, false);
+            actionsCell.appendChild(removeAdminBtn);
+        }
+    });
+}
+        async function toggleAdminStatus(username, makeAdmin) {
+    try {
+        const response = await fetch('/admin/users/toggle_admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `username=${encodeURIComponent(username)}&make_admin=${makeAdmin}`
+        });
+        const message = await response.text();
+        if (!response.ok) throw new Error(message);
+        displayMessage(message);
+        fetchUsers();
+    } catch (error) {
+        console.error('Error toggling admin status:', error);
+        displayMessage(`Error: ${error.message}`, true);
+    }
+}
+
+
+        function applyFilters() {
+            fetchUsers();
+        }
+
+         async function toggleUserSuspension(username, isSuspended) {
+      try {
+        const response = await fetch('/admin/users/toggle_suspension', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `username=${encodeURIComponent(username)}&is_suspended=${isSuspended}`
+        });
+        const message = await response.text();
+        if (!response.ok) throw new Error(message);
+        displayMessage(message);
+        fetchUsers();
+          } catch (error) {
+        console.error('Error toggling suspension:', error);
+        displayMessage(`Error: ${error.message}`, true);
+    }
+}
+
+        async function deleteUser(username) {
+            if (!confirm(`Are you sure you want to delete user "${username}"?`)) {
+                return;
+            }
+            try {
+                const response = await fetch('/admin/users/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `username=${encodeURIComponent(username)}`
+                });
+                const message = await response.text();
+                if (!response.ok) throw new Error(message);
+                displayMessage(message);
+                fetchUsers();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                displayMessage(`Error: ${error.message}`, true);
+            }
+        }
+
+        // --- Movie Management Functions ---
+        const movieTableBody = document.getElementById('movie-table-body');
+        const movieForm = document.getElementById('movie-form');
+        const movieIdInput = document.getElementById('movie-id');
+        const movieTitleInput = document.getElementById('movie-title');
+        const movieOverviewInput = document.getElementById('movie-overview');
+        const movieReleaseDateInput = document.getElementById('movie-release-date');
+        const moviePosterPathInput = document.getElementById('movie-poster-path');
+        const movieGenresSelect = document.getElementById('movie-genres');
+        const movieIsFeaturedInput = document.getElementById('movie-is-featured');
+        const saveMovieBtn = document.getElementById('save-movie-btn');
+        const cancelEditMovieBtn = document.getElementById('cancel-edit-movie-btn');
+
+        async function fetchMovies() {
+            try {
+                const response = await fetch('/admin/movies');
+                const movies = await response.json();
+                renderMovies(movies);
+            } catch (error) {
+                console.error('Error fetching movies:', error);
+                movieTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Failed to load movies.</td></tr>';
+            }
+        }
+
+        function renderMovies(movies) {
+            movieTableBody.innerHTML = '';
+            if (movies.length === 0) {
+                movieTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No movies found.</td></tr>';
+                return;
+            }
+            movies.forEach(movie => {
+                const row = movieTableBody.insertRow();
+                row.insertCell().textContent = movie.title;
+                row.insertCell().textContent = movie.release_date || 'N/A';
+                const genreNames = movie.genre_ids ? movie.genre_ids.map(id => {
+                    const genre = allManagedGenres.find(g => g.id === id);
+                    return genre ? genre.name : 'Unknown Genre';
+                }).join(', ') : 'N/A';
+                row.insertCell().textContent = genreNames;
+                row.insertCell().textContent = movie.is_featured ? 'Yes' : 'No';
+                const actionsCell = row.insertCell();
+
+                const editBtn = document.createElement('button');
+                editBtn.className = 'btn btn-sm btn-primary';
+                editBtn.textContent = 'Edit';
+                editBtn.onclick = () => editMovie(movie.id);
+                actionsCell.appendChild(editBtn);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn btn-sm btn-danger';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.onclick = () => deleteMovie(movie.id, movie.title);
+                actionsCell.appendChild(deleteBtn);
+            });
+        }
+
+        async function editMovie(movieId) {
+            try {
+                const response = await fetch(`/admin/movies?movie_id=${movieId}`);
+                const movie = await response.json();
+                movieIdInput.value = movie.id;
+                movieTitleInput.value = movie.title;
+                movieOverviewInput.value = movie.overview;
+                movieReleaseDateInput.value = movie.release_date;
+                moviePosterPathInput.value = movie.poster_path;
+                movieIsFeaturedInput.checked = movie.is_featured;
+
+                // Select genres
+                Array.from(movieGenresSelect.options).forEach(option => {
+                    option.selected = movie.genre_ids && movie.genre_ids.includes(option.value);
+                });
+
+                saveMovieBtn.textContent = 'Update Movie';
+                cancelEditMovieBtn.style.display = 'inline-block';
+            } catch (error) {
+                console.error('Error fetching movie for edit:', error);
+                displayMessage('Failed to load movie for editing.', true);
+            }
+        }
+
+        function resetMovieForm() {
+            movieForm.reset();
+            movieIdInput.value = '';
+            saveMovieBtn.textContent = 'Add Movie';
+            cancelEditMovieBtn.style.display = 'none';
+            Array.from(movieGenresSelect.options).forEach(option => option.selected = false);
+        }
+
+       movieForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const isEditing = movieIdInput.value !== '';
+    const url = isEditing ? '/admin/movies/edit' : '/admin/movies/add';
+    const method = 'POST';
+
+    const selectedGenreIds = Array.from(movieGenresSelect.selectedOptions).map(option => option.value);
+
+    const formData = new URLSearchParams();
+    if (isEditing) formData.append('id', movieIdInput.value);
+    formData.append('title', movieTitleInput.value);
+    formData.append('overview', movieOverviewInput.value);
+    formData.append('release_date', movieReleaseDateInput.value);
+    formData.append('poster_path', moviePosterPathInput.value);
+    formData.append('is_featured', movieIsFeaturedInput.checked);
+    formData.append('genre_ids', JSON.stringify(selectedGenreIds));
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
+        });
+        const message = await response.text();
+        if (!response.ok) throw new Error(message);
+        displayMessage(message);
+        resetMovieForm();
+        fetchMovies();
+    } catch (error) {
+        console.error('Error saving movie:', error);
+        displayMessage(`Error saving movie: ${error.message}`, true);
+    }
+});
+
+
+        async function deleteMovie(movieId, movieTitle) {
+            if (!confirm(`Are you sure you want to delete movie "${movieTitle}"?`)) {
+                return;
+            }
+            try {
+                const response = await fetch('/admin/movies/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `id=${encodeURIComponent(movieId)}`
+                });
+                const message = await response.text();
+                if (!response.ok) throw new Error(message);
+                displayMessage(message);
+                fetchMovies();
+            } catch (error) {
+                console.error('Error deleting movie:', error);
+                displayMessage(`Error: ${error.message}`, true);
+            }
+        }
+
+        // --- Genre Management Functions ---
+        const genreTableBody = document.getElementById('genre-table-body');
+        const genreForm = document.getElementById('genre-form');
+        const genreIdInput = document.getElementById('genre-id');
+        const genreNameInput = document.getElementById('genre-name');
+        const saveGenreBtn = document.getElementById('save-genre-btn');
+        const cancelEditGenreBtn = document.getElementById('cancel-edit-genre-btn');
+
+        async function fetchAllGenres() {
+            try {
+                const response = await fetch('/api/genres'); // Use public API for genre list
+                allManagedGenres = await response.json();
+                populateGenreSelect(allManagedGenres);
+                return allManagedGenres;
+            } catch (error) {
+                console.error('Error fetching all genres:', error);
+                displayMessage('Failed to load genres for movie management.', true);
+                return [];
+            }
+        }
+
+        function populateGenreSelect(genres) {
+            movieGenresSelect.innerHTML = '';
+            genres.forEach(genre => {
+                const option = document.createElement('option');
+                option.value = genre.id;
+                option.textContent = genre.name;
+                movieGenresSelect.appendChild(option);
+            });
+        }
+
+        async function fetchGenres() {
+            try {
+                const response = await fetch('/api/genres'); // Use public API for genre list
+                const genres = await response.json();
+                renderGenres(genres);
+            } catch (error) {
+                console.error('Error fetching genres:', error);
+                genreTableBody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: red;">Failed to load genres.</td></tr>';
+            }
+        }
+
+        function renderGenres(genres) {
+            genreTableBody.innerHTML = '';
+            if (genres.length === 0) {
+                genreTableBody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No genres found.</td></tr>';
+                return;
+            }
+            genres.forEach(genre => {
+                const row = genreTableBody.insertRow();
+                row.insertCell().textContent = genre.name;
+                const actionsCell = row.insertCell();
+
+                const editBtn = document.createElement('button');
+                editBtn.className = 'btn btn-sm btn-primary';
+                editBtn.textContent = 'Edit';
+                editBtn.onclick = () => editGenre(genre.id);
+                actionsCell.appendChild(editBtn);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn btn-sm btn-danger';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.onclick = () => deleteGenre(genre.id, genre.name);
+                actionsCell.appendChild(deleteBtn);
+            });
+        }
+
+        async function editGenre(genreId) {
+            try {
+                const response = await fetch(`/api/genres?genre_id=${genreId}`);
+                const genre = await response.json();
+                genreIdInput.value = genre.id;
+                genreNameInput.value = genre.name;
+                saveGenreBtn.textContent = 'Update Genre';
+                cancelEditGenreBtn.style.display = 'inline-block';
+            } catch (error) {
+                console.error('Error fetching genre for edit:', error);
+                displayMessage('Failed to load genre for editing.', true);
+            }
+        }
+
+        function resetGenreForm() {
+            genreForm.reset();
+            genreIdInput.value = '';
+            saveGenreBtn.textContent = 'Add Genre';
+            cancelEditGenreBtn.style.display = 'none';
+        }
+
+        genreForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const isEditing = genreIdInput.value !== '';
+            const url = isEditing ? '/admin/genres/update' : '/admin/genres/add';
+            const method = 'POST';
+
+            const formData = new URLSearchParams();
+            if (isEditing) formData.append('id', genreIdInput.value);
+            formData.append('name', genreNameInput.value);
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                const message = await response.text();
+                if (!response.ok) throw new Error(message);
+                displayMessage(message);
+                resetGenreForm();
+                fetchGenres();
+                fetchAllGenres(); // Refresh genres for movie form
+            } catch (error) {
+                console.error('Error saving genre:', error);
+                displayMessage(`Error saving genre: ${error.message}`, true);
+            }
+        });
+
+        async function deleteGenre(genreId, genreName) {
+            if (!confirm(`Are you sure you want to delete genre "${genreName}"?`)) {
+                return;
+            }
+            try {
+                const response = await fetch('/admin/genres/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `id=${encodeURIComponent(genreId)}`
+                });
+                const message = await response.text();
+                if (!response.ok) throw new Error(message);
+                displayMessage(message);
+                fetchGenres();
+                fetchAllGenres(); // Refresh genres for movie form
+            } catch (error) {
+                console.error('Error deleting genre:', error);
+                displayMessage(`Error: ${error.message}`, true);
+            }
+        }
+
+        // --- Analytics Functions ---
+        async function fetchAnalytics() {
+            try {
+                // Fetch Users by Creation Month
+                const usersByCreationMonthData = await fetch('/admin/analytics/users_by_creation_month').then(res => res.json());
+                renderChart('usersByCreationMonthChart', 'bar', usersByCreationMonthData, 'Users', 'Month');
+
+                // Fetch Movies by Genre
+                const moviesByGenreData = await fetch('/admin/analytics/movies_by_genre').then(res => res.json());
+                renderChart('moviesByGenreChart', 'doughnut', moviesByGenreData, 'Movies', 'Genre');
+
+                // Fetch Top Movies by Feature
+                const topMoviesByFeatureData = await fetch('/admin/analytics/top_movies_by_feature').then(res => res.json());
+                renderChart('topMoviesByFeatureChart', 'bar', topMoviesByFeatureData, 'Movies', 'Movie Title');
+
+                // Fetch Active vs Suspended Users
+                const activeVsSuspendedUsersData = await fetch('/admin/analytics/active_vs_suspended_users').then(res => res.json());
+                renderChart('activeVsSuspendedUsersChart', 'pie', activeVsSuspendedUsersData, 'Users', 'Status');
+
+            } catch (error) {
+                console.error('Error fetching analytics data:', error);
+                displayMessage('Failed to load analytics data.', true);
+            }
+        }
+
+        function renderChart(canvasId, type, data, label, labelKey) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            let labels = [];
+            let values = [];
+
+            if (labelKey === 'Month') {
+                // For users_by_creation_month: data is { "YYYY-MM": count }
+                labels = Object.keys(data).sort();
+                values = labels.map(key => data[key]);
+            } else if (labelKey === 'Genre') {
+                // For movies_by_genre: data is { "GenreName": count }
+                labels = Object.keys(data);
+                values = labels.map(key => data[key]);
+            } else if (labelKey === 'Movie Title') {
+                // For top_movies_by_feature: data is { "Movie Title": count }
+                labels = Object.keys(data);
+                values = labels.map(key => data[key]);
+            } else if (labelKey === 'Status') {
+                // For active_vs_suspended_users: data is { "active": count, "suspended": count }
+                labels = Object.keys(data);
+                values = labels.map(key => data[key]);
+            }
+
+            if (window[canvasId + 'Chart']) {
+                window[canvasId + 'Chart'].destroy();
+            }
+
+            window[canvasId + 'Chart'] = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: values,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // --- Application Settings Functions ---
+        async function fetchSettings() {
+            try {
+                const response = await fetch('/api/settings'); // Corrected endpoint
+                const settings = await response.json();
+                document.getElementById('tmdb-api-key').value = settings.TMDB_API_KEY || '';
+                document.getElementById('allow-signup').checked = settings.ALLOW_SIGNUP || false;
+                document.getElementById('site-announcement').value = settings.SITE_ANNOUNCEMENT || '';
+                document.getElementById('announcement-active').checked = settings.ANNOUNCEMENT_ACTIVE || false;
+            } catch (error) {
+                console.error('Error fetching settings:', error);
+                displayMessage('Failed to load application settings.', true);
+            }
+        }
+
+        async function saveSettings() {
+            const formData = new URLSearchParams();
+            formData.append('TMDB_API_KEY', document.getElementById('tmdb-api-key').value);
+            formData.append('ALLOW_SIGNUP', document.getElementById('allow-signup').checked);
+            formData.append('SITE_ANNOUNCEMENT', document.getElementById('site-announcement').value);
+            formData.append('ANNOUNCEMENT_ACTIVE', document.getElementById('announcement-active').checked);
+
+            try {
+                const response = await fetch('/admin/settings/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                const message = await response.text();
+                if (!response.ok) throw new Error(message);
+                displayMessage(message);
+                fetchSettings();
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                displayMessage(`Error saving settings: ${error.message}`, true);
+            }
+        }
+
+        // Global message display function
+        function displayMessage(message, isError = false) {
+            statusMessageDiv.textContent = message;
+            statusMessageDiv.style.display = 'block';
+            statusMessageDiv.classList.remove('error', 'success'); // Remove both
+            statusMessageDiv.classList.add(isError ? 'error' : 'success'); // Add appropriate class
+            setTimeout(() => {
+                statusMessageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Initial load: show user management section by default
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('user-management');
+        });
+    </script>
+</body>
+</html>

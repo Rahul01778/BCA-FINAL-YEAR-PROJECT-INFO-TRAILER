@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="container">
+        <form method="POST" action="http://localhost:8080/login" class="form-box">
+            <h2>Login</h2>
+            <label>Username</label>
+            <input type="text" name="username" required>
+
+            <label>Password</label>
+            <div class="password-container">
+                <input type="password" name="password" id="password" required>
+                <span id="eye-icon" class="eye-icon" onclick="togglePassword()">👁️</span>
+            </div>
+
+            <button type="submit">Login</button>
+
+            <p>Don't have an account? <a href="/signup">Sign up</a></p>
+        </form>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                eyeIcon.textContent = "🙈";  // Change icon to hide
+            } else {
+                passwordField.type = "password";
+                eyeIcon.textContent = "👁️";  // Change icon to show
+            }
+        }
+    </script>
+</body>
+</html>

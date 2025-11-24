@@ -1,0 +1,729 @@
+/* General Styling - Modern, Clean, Light Theme */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Very light grey background for the whole page */
+    color: #343a40; /* Dark text for readability */
+    line-height: 1.6;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Admin Wrapper - Flexbox for Sidebar + Main Content */
+.admin-wrapper {
+    display: flex;
+    width: 100%;
+}
+
+/* Sidebar Styling - Darker, Minimalist */
+.sidebar {
+    width: 250px;
+    background-color: #212529; /* Very dark grey/black for sidebar */
+    color: #e9ecef; /* Light text on sidebar */
+    padding: 20px 0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.sidebar .logo {
+    text-align: center;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    color: #fff;
+    font-size: 1.8em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.sidebar .logo span {
+    color: #17a2b8; /* Techmin blue accent */
+}
+
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 2px; /* Tighter spacing */
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #adb5bd; /* Muted text for inactive items */
+    text-decoration: none;
+    font-weight: 400; /* Lighter font weight */
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-left: 4px solid transparent; /* Subtle indicator */
+}
+
+.sidebar-nav a i {
+    margin-right: 12px;
+    font-size: 1.05em;
+    width: 20px; /* Align icons */
+    text-align: center;
+}
+
+.sidebar-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.05); /* Very subtle hover */
+    color: #fff; /* White text on hover */
+    border-left-color: #17a2b8; /* Techmin blue on hover */
+}
+
+.sidebar-nav a.active {
+    background-color: #17a2b8; /* Techmin blue for active item */
+    color: #fff; /* White text on active item */
+    border-left-color: #17a2b8; /* Strong active indicator */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-weight: 500; /* Slightly bolder active item */
+}
+
+/* Main Content Area */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa; /* Light background for content area */
+}
+
+/* Top Header Bar - Minimalist */
+.top-header {
+    background-color: #fff;
+    padding: 15px 30px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08); /* Very subtle shadow */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e9ecef;
+    min-height: 60px; /* Consistent height */
+}
+
+.top-header .app-brand {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #343a40;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.top-header .app-brand i {
+    color: #17a2b8; /* Techmin blue icon */
+    font-size: 1.5em;
+}
+
+.top-header .user-controls-top { /* Renamed to avoid conflict */
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Spacing between top elements */
+}
+
+.top-header .user-controls-top .icon-btn {
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+.top-header .user-controls-top .icon-btn:hover {
+    background-color: #e9ecef;
+}
+
+.top-header .user-profile-img { /* Changed from .user-profile img */
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 1px solid #dee2e6;
+}
+
+/* Main Content Container - Card-based */
+.container {
+    padding: 25px; /* Overall padding around content cards */
+    flex-grow: 1;
+}
+
+/* Dashboard Header - Used for main page title inside .container */
+.dashboard-header {
+    margin-bottom: 25px;
+    color: #343a40;
+    font-size: 1.8em;
+    font-weight: 600;
+}
+
+/* Cards (Sections) Styling - Replacing .section */
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+    border: 1px solid #e9ecef; /* Very light border */
+    margin-bottom: 25px; /* Spacing between cards */
+    /* Padding is now handled by .card-body */
+    animation: fadeIn 0.6s ease-out; /* Keep fade in */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); } /* More subtle */
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card-header {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #343a40;
+    padding: 15px 20px; /* Padding for header */
+    border-bottom: 1px solid #e9ecef; /* Thin separator */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h2 { /* Targeting h2 specifically within card-header */
+    font-size: 1.2em; /* Smaller h2 for card headers */
+    margin: 0; /* Remove default margin */
+    padding: 0;
+    color: #343a40;
+    border-bottom: none; /* Remove bottom border if inherited */
+}
+
+.card-body { /* New class for content within card */
+    padding: 20px;
+}
+
+.card-body h3 { /* Style for subheadings within card body */
+    color: #343a40;
+    font-size: 1.3em;
+    margin-top: 25px; /* Spacing above subheadings */
+    margin-bottom: 15px;
+}
+
+.mt-4 { /* General utility class, might need specific overrides in context */
+    margin-top: 25px;
+}
+
+/* Status Messages - No change, already good colors */
+.status-message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    animation: fadeAndSlideIn 0.5s forwards;
+}
+
+.status-message.success {
+    background-color: #28a745; /* Bootstrap success green */
+}
+
+.status-message.error {
+    background-color: #dc3545; /* Bootstrap error red */
+}
+
+@keyframes fadeAndSlideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* User Controls (Search and Filter) - Now a .card-header-controls within .card-body */
+.card-header-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px; /* Spacing below controls */
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0; /* No padding here, card-body provides it */
+    background: none;
+    box-shadow: none;
+    border: none;
+}
+
+/* Input/Select/Textarea styling */
+input[type="text"],
+input[type="date"],
+textarea,
+select {
+    width: 100%; /* Default to full width */
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #fff; /* White background */
+    color: #495057;
+    font-size: 0.95em;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #17a2b8; /* Techmin blue focus */
+    box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.25); /* Lighter focus shadow */
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Specific width for search/filter inputs when in controls */
+.card-header-controls .search-input,
+.card-header-controls .filter-select {
+    flex-grow: 1;
+    max-width: 250px; /* Limit width in control bar */
+}
+
+/* General Button Styles - Modern, Flat (replacing old .toggle-btn, .delete-btn etc.) */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    color: white; /* Default to white text on buttons */
+    font-weight: 500;
+    text-decoration: none; /* For anchor tags styled as buttons */
+    display: inline-block; /* For anchor tags styled as buttons */
+}
+
+.btn:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Subtle hover shadow */
+}
+
+/* Small Button Modifier */
+.btn-sm {
+    padding: 6px 10px;
+    font-size: 0.8em;
+    border-radius: 4px;
+}
+
+/* Specific Button Colors (Bootstrap-like palette) */
+.btn-primary { /* Often for "Add New", "Save" */
+    background-color: #007bff;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary { /* For "Cancel", "Reset Password" */
+    background-color: #6c757d;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-success { /* For "Apply Filters", "Activate" */
+    background-color: #28a745;
+}
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-danger { /* For "Delete", "Suspend" */
+    background-color: #dc3545;
+}
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-info { /* For "Edit", "Make Admin", "Featured" */
+    background-color: #17a2b8; /* Techmin blue */
+}
+.btn-info:hover {
+    background-color: #138496;
+}
+
+.btn-warning { /* For "Suspend", "Unfeature" */
+    background-color: #ffc107;
+    color: #212529; /* Dark text on warning */
+}
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+
+/* Table Styling (User Table & Content Table) - Clean, minimalist */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef; /* Very light border */
+    color: #495057;
+    font-size: 0.9em;
+}
+
+.data-table th {
+    background-color: #f8f9fa; /* Lighter header background */
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-size: 0.85em;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #fff; /* Keep white for even rows, or very subtle if needed */
+}
+
+.data-table tr:hover {
+    background-color: #f8f9fa; /* Subtle hover effect */
+    transition: background-color 0.15s ease;
+}
+
+/* Action Buttons (Table Specific) */
+.action-buttons {
+    display: flex;
+    gap: 5px; /* Smaller gap */
+    flex-wrap: wrap;
+}
+
+/* Badges - Modern, Compact */
+.badge {
+    padding: 5px 9px;
+    border-radius: 4px; /* Less rounded, more rectangular */
+    font-weight: 600;
+    font-size: 0.7em; /* Even smaller font */
+    text-transform: uppercase;
+    display: inline-block;
+    min-width: 50px;
+    text-align: center;
+    box-shadow: none; /* No shadow on badges */
+    margin-right: 3px;
+    border: 1px solid transparent; /* Subtle border for definition */
+}
+
+/* Specific Badge Colors (Adjusted to new theme) */
+.badge-warning { background-color: #ffc107; color: #212529; border-color: #ffc107; } /* Warning yellow for admin */
+.badge-secondary { background-color: #6c757d; color: white; border-color: #6c757d; } /* Muted grey for user / not featured */
+.badge-danger { background-color: #dc3545; color: white; border-color: #dc3545; } /* Red for Suspended */
+.badge-success { background-color: #28a745; color: white; border-color: #28a745; } /* Green for Active */
+.badge-info { background-color: #17a2b8; color: white; border-color: #17a2b8; } /* Techmin blue for featured */
+
+
+/* Content Forms (Add/Edit Movie/Genre/Settings) - Now also a .card-body */
+.content-form {
+    /* These styles will be inherited from .card-body */
+    background-color: transparent; /* No background for forms, inherited from card */
+    padding: 0; /* No padding here, card-body provides it */
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    margin-bottom: 20px; /* Spacing between forms if multiple */
+}
+
+.form-group {
+    margin-bottom: 1rem; /* Consistent spacing */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.95em;
+}
+
+.multi-select-dropdown {
+    height: auto;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    transform: scale(1); /* Reset scale, let browser handle it */
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+/* Footer - Simple, light */
+.dashboard-footer {
+    text-align: center;
+    margin-top: auto; /* Push footer to bottom */
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    color: #888;
+    font-size: 0.85em;
+    background-color: #fff;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+/* Responsive Design */
+@media (max-width: 992px) { /* Adjust breakpoint for larger tablets */
+    .sidebar {
+        width: 200px; /* Slightly narrower sidebar */
+        padding: 15px 0;
+    }
+    .sidebar .logo {
+        font-size: 1.6em;
+    }
+    .sidebar-nav a {
+        padding: 10px 15px;
+    }
+    .top-header {
+        padding: 10px 20px;
+    }
+    .top-header .app-brand {
+        font-size: 1.1em;
+    }
+    .top-header .user-controls-top .icon-btn { /* Changed name */
+        font-size: 1.1em;
+    }
+    .container {
+        padding: 20px;
+    }
+    .card {
+        padding: 0; /* Padding now handled by card-body */
+    }
+    .card-body {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 10px 0;
+    }
+
+    .sidebar .logo {
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+
+    .sidebar-nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+        padding: 0 10px;
+    }
+    .sidebar-nav li {
+        flex-basis: auto;
+        margin-bottom: 0;
+    }
+    .sidebar-nav a {
+        justify-content: center;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        text-align: center;
+    }
+    .sidebar-nav a i {
+        margin-right: 0;
+        display: block;
+        margin-bottom: 3px;
+    }
+    .sidebar-nav a.active {
+        border-left-color: transparent;
+        border-bottom-color: #17a2b8;
+    }
+
+    .top-header {
+        padding: 10px 15px;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    .top-header .user-controls-top { /* Changed name */
+        justify-content: center;
+        width: 100%;
+    }
+
+    .container {
+        margin: 15px;
+        padding: 15px;
+    }
+
+    .card {
+        padding: 0;
+    }
+    .card-body {
+        padding: 15px;
+    }
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        padding: 12px 15px;
+    }
+
+    .card-header-controls {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 10px; /* Adjust gap for stacked inputs */
+    }
+
+    .card-header-controls .search-input,
+    .card-header-controls .filter-select,
+    .btn { /* Apply to all .btn in controls as well */
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .data-table th, .data-table td {
+        padding: 8px 10px;
+        font-size: 0.8em;
+    }
+
+    .action-buttons .btn {
+        padding: 4px 6px;
+        font-size: 0.7em;
+        margin: 1px;
+    }
+
+    .badge {
+        font-size: 0.65em;
+        padding: 4px 7px;
+        min-width: 45px;
+    }
+}
+/* Analytics Dashboard Specific Styles */
+
+/* Overall Analytics Dashboard Layout */
+.analytics-dashboard {
+    padding: 20px;
+    background-color: #f8f9fa; /* Consistent with general body background */
+}
+
+/* Stats Grid for Key Metrics */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Individual Stat Card */
+.stat-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card .icon {
+    font-size: 2.5rem;
+    color: #17a2b8; /* Accent color */
+    margin-bottom: 15px;
+}
+
+.stat-card .value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #343a40;
+    margin-bottom: 5px;
+}
+
+.stat-card .label {
+    font-size: 0.95rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Chart Card Styling (reusing .card structure) */
+.chart-card {
+    /* Inherits general .card styles */
+    margin-bottom: 30px; /* Ensure consistent spacing */
+}
+
+.chart-card .card-body {
+    padding: 20px;
+}
+
+/* Specific Chart Container */
+.chart-container {
+    position: relative;
+    height: 300px; /* Standard height for charts */
+    width: 100%;
+    margin-top: 15px; /* Spacing after chart title if any */
+}
+
+/* Responsive adjustments for charts */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr; /* Stack stat cards on smaller screens */
+    }
+
+    .chart-container {
+        height: 250px; /* Slightly reduce height on smaller devices */
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-card .icon {
+        font-size: 2rem;
+    }
+    .stat-card .value {
+        font-size: 1.8rem;
+    }
+    .stat-card .label {
+        font-size: 0.85rem;
+    }
+    .chart-container {
+        height: 200px; /* Further reduce height on very small screens */
+    }
+}
+.data-table th:nth-child(2), .data-table td:nth-child(2) {
+    min-width: 200px; /* Email column */
+}
+
+.data-table th:nth-child(3), .data-table td:nth-child(3) {
+    min-width: 120px; /* Phone column */
+}

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>LUHAR - Movie Info</title>
+    <meta name="description" content="LUHAR - Professional movie info app featuring popular movies, search, night mode, and secure login." />
+    <meta name="keywords" content="movies, trailers, Luhar, movie info, search, night mode, login" />
+    <meta name="author" content="Your Name or Company" />
+    <link rel="icon" href="CINEMA LOGO VECTOR.jpg" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="script.js" defer></script>
+    <style>
+        /* Add pagination styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .pagination-button {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #333;
+            padding: 8px 16px;
+            margin: 0 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .pagination-button:hover:not(:disabled) {
+            background-color: #e9ecef;
+        }
+
+        .pagination-button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .pagination-ellipsis {
+            padding: 8px 12px;
+            margin: 0 2px;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .pagination-container {
+                gap: 3px;
+            }
+            .pagination-button {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <button id="hamburger-button" class="hamburger-button">
+                <i class="fa fa-bars"></i>
+            </button>
+            <h1 class="logo">LUHAR</h1>
+        </div>
+        <div class="navbar-right">
+            <div class="nav-links nav-links-sidebar" id="nav-links">
+                <button id="home-button" onclick="goHome()">
+                    <i class="fa fa-home"></i> Home
+                </button>
+                <input type="text" id="search-input" placeholder="Search Movies..." />
+                <button id="search-button" onclick="searchMovies()">
+                    <i class="fa fa-search"></i> Search
+                </button>
+                <select id="genre-select" onchange="filterMoviesByGenre(this.value)">
+                    <option value="">Browse Genres</option>
+                </select>
+                <button onclick="fetchTrendingMovies()">Trending</button>
+                <button onclick="fetchTopRatedMovies()">Top Rated</button>
+                <button id="night-mode-toggle" onclick="toggleNightMode()">
+                    <i class="fa fa-moon" id="theme-icon"></i>
+                </button>
+                <button id="login-button" onclick="window.location.href='http://localhost:8080/login'">
+                    <i class="fa fa-user"></i>
+                </button>
+                <span id="user-info" style="margin-left: 10px; font-weight: bold;"></span>
+                <button id="logout-button" onclick="logout()" style="display: none;">
+                    <i class="fa fa-sign-out-alt"></i>
+                </button>
+                <button onclick="window.location.href='watchlist.html'" title="Watchlist">
+                    <i class="fa-solid fa-bookmark"></i>
+                </button>
+                <button onclick="window.location.href='/profile'" title="Profile">
+                    <i class="fa-solid fa-user-circle"></i> Profile
+                </button>
+                <button id="admin-dashboard-button" onclick="window.location.href='/admin'" class="nav-button" style="display: none;">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Admin
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <h2 id="current-category-title" class="category-title">Popular Movies</h2>
+        <section id="movie-list" class="movie-grid"></section>
+        <!-- Pagination container added here -->
+        <div id="pagination-container" class="pagination-container"></div>
+        
+        <section id="movie-details-section" class="details-section" style="display: none;">
+            <div id="movie-details-content" class="details-content"></div>
+        </section>
+        <section id="person-details-section" class="details-section" style="display: none;">
+            <div id="person-details-content" class="details-content"></div>
+        </section>
+    </main>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <script>
+        const hamburgerButton = document.getElementById("hamburger-button");
+        const navLinks = document.getElementById("nav-links");
+        const sidebarOverlay = document.getElementById("sidebar-overlay");
+
+        function toggleSidebar() {
+            navLinks.classList.toggle("show");
+            sidebarOverlay.classList.toggle("show");
+        }
+
+        function closeSidebar() {
+            navLinks.classList.remove("show");
+            sidebarOverlay.classList.remove("show");
+        }
+
+        hamburgerButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleSidebar();
+        });
+
+        document.addEventListener("click", (event) => {
+            if (navLinks.classList.contains("show") &&
+                !navLinks.contains(event.target) &&
+                !hamburgerButton.contains(event.target)) {
+                closeSidebar();
+            }
+        });
+
+        // --- Helper function to get cookie by name ---
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // --- Admin Button Visibility Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const adminButton = document.getElementById('admin-dashboard-button');
+            const loginButton = document.getElementById('login-button');
+            const logoutButton = document.getElementById('logout-button');
+            const userInfo = document.getElementById('user-info');
+
+            const username = getCookie('username');
+            const isAdmin = getCookie('is_admin'); // should be 'admin' for admin users
+
+            if (username) {
+                userInfo.textContent = username;
+                loginButton.style.display = 'none';
+                logoutButton.style.display = 'inline-block';
+            }
+
+            if (isAdmin === 'admin') {
+                adminButton.style.display = 'inline-block';
+            }
+        });
+
+        function logout() {
+            document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "is_admin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            location.reload();
+        }
+    </script>
+</body>
+</html>
