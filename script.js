@@ -1,4 +1,4 @@
-const apiKey = '29a4388f3ecf68e539a54511a66f2bc5';
+const apiKey = 'here api key ';
 const apiUrl = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&sort_by=popularity.desc`;
 
 // Pagination variables
@@ -1148,3 +1148,4 @@ async function toggleAdminStatus(username, makeAdmin) {
         showToast('Error toggling admin status.', true);
     }
 }
+
